@@ -4,11 +4,12 @@ from settings import config, DSN
 from db import meta
 
 
-def create_tables(engine):
-    meta.create_all(bind=engine)
+def drop_tables(engine):
+    meta.drop_all(bind=engine)
 
 
 if __name__ == '__main__':
     db_url = DSN.format(**config['postgres'])
     engine = create_engine(db_url)
-    create_tables(engine)
+    drop_tables(engine)
+    print("All tables were successfully dropped!")
