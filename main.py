@@ -2,8 +2,11 @@ from aiopg.sa import create_engine
 from sanic import Sanic
 
 from common.settings import config
+from common.urls import setup_routes
+
 
 app = Sanic(name=__name__)
+setup_routes(app)
 
 
 @app.listener('before_server_start')
