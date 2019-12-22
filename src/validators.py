@@ -1,9 +1,10 @@
 import re
+
 from jsonschema import validate, FormatChecker
 from jsonschema.exceptions import ValidationError
 from passlib.hash import sha256_crypt
 
-from db.db import get_user_by_email, get_user_fields
+from src.db.model import get_user_by_email, get_user_fields
 
 ERR_MSG_UNIQUE_EMAIL = "User with this email is already exist"
 

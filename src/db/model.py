@@ -32,5 +32,7 @@ async def get_user_by_email(conn, email):
 
 async def create_user(conn, user_data):
     cursor = await conn.execute(insert(users).values(user_data))
-    result = await cursor.fetchall()[0][0]
+    all_data = await cursor.fetchall()
+    user_id = all_data[0][0]
+    print("New user id: {}".format(user_id))
     # todo: create token for user after creation

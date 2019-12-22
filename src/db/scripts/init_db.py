@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine
 from __init__ import *
-from settings import config, DSN
-from db import meta
+from src.settings import config, DSN
+from sqlalchemy import create_engine
+
+from src.db.model import meta
 
 
 def create_tables(engine):

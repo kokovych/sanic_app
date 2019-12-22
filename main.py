@@ -1,8 +1,8 @@
 from aiopg.sa import create_engine
 from sanic import Sanic
 
-from common.settings import config
-from common.urls import setup_routes
+from src.settings import config
+from src.urls import setup_routes
 
 
 app = Sanic(name=__name__)

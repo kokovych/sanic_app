@@ -1,8 +1,8 @@
 from sanic.response import json, text
 from sanic.views import HTTPMethodView
 
+from src.db.model import create_user
 from .validators import clean_user_data, registration_valid_data
-from db.db import create_user
 
 
 async def main_page(request):
@@ -24,5 +24,3 @@ class UserView(HTTPMethodView):
         return json({
             'data': 'User was successfully created!'
         }, status=201)
-
-
