@@ -22,9 +22,11 @@ $ source venv/bin/activate
 $ psql -U postgres -h localhost
 > CREATE DATABASE <DB_NAME_HERE>;
 > CREATE USER <USERNAME_HERE> WITH PASSWORD 'password_here';
-> GRANT ALL PRIVILEGES ON DATABASE <DB_NAME_HERE> TO <USERNAME_HERE>;
+> GRANT ALL PRIVILEGES ON DATABASE < DB_NAME_HERE > TO <USERNAME_HERE>;
 
 ```
+
+The same for test database.
 
 #### Run
 

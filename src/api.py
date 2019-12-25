@@ -2,6 +2,7 @@ from sanic.response import json, text
 from sanic.views import HTTPMethodView
 
 from src.db.model import create_user
+from .constants import (EMPTY_ERROR, USER_SUCCESS_CREATION)
 from .validators import clean_user_data, registration_valid_data
 
 
@@ -13,6 +14,9 @@ class UserView(HTTPMethodView):
 
     async def post(self, request):
         db_conn = request.app.config.get('db')
+        data = request.json
+        if not data:
+            return json(body=EMPTY_ERROR, status=400)
         data = clean_user_data(request.json)
         async with db_conn.acquire() as conn:
             error_data = await registration_valid_data(data, conn)
@@ -21,6 +25,4 @@ class UserView(HTTPMethodView):
                     "error": error_data
                 }, status=400)
             await create_user(conn, data)
-        return json({
-            'data': 'User was successfully created!'
-        }, status=201)
+        return json(body=USER_SUCCESS_CREATION, status=201)
