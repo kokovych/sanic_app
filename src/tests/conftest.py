@@ -1,36 +1,39 @@
 from sanic import Sanic
 import pytest
-from aiopg.sa import create_engine
 from sqlalchemy import create_engine as create_engine_sa
 
+from src.constants import POSTGRES_CONN_STR
 from src.settings import test_config, DSN
 from src.db.scripts.drop_db import drop_tables
+from src.db.scripts.init_db import create_tables
 from src.urls import setup_routes
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.yield_fixture(scope="module")
 def app_test():
-    print('start app_test')
-    app_test = Sanic(name=__name__)
-    setup_routes(app_test)
+    app = Sanic(name="test_app")
+    setup_routes(app)
+
+    db_url = DSN.format(**test_config['postgres'])
+    engine_sa = create_engine_sa(db_url)
+    create_tables(engine_sa)
+
     conf = test_config['postgres']
-    engine = create_engine(
+
+    connection = POSTGRES_CONN_STR.format(
         database=conf['database'],
         user=conf['user'],
         password=conf['password'],
-        host=conf['host'],
-        port=conf['port']
+        host=conf['host']
     )
-    app_test.config['test_db'] = engine
-    yield app_test
-    db = app_test.config.get('test_db')
-    if db:
-        print('closing db...')
-        db.close()
+    app.config['db_conn'] = connection
+
+    yield app
+
+    print("Dropping test tables...")
+    drop_tables(engine_sa)
 
 
-@pytest.fixture()
-def drop_test_db():
-    db_url = DSN.format(**test_config['postgres'])
-    engine = create_engine_sa(db_url)
-    drop_tables(engine)
+@pytest.fixture
+def test_cli(loop, app_test,  sanic_client):
+    return loop.run_until_complete(sanic_client(app_test))

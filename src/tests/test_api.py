@@ -1,11 +1,12 @@
+import json
+
 from src.constants import (EMPTY_ERROR, USER_SUCCESS_CREATION)
 
 USER_URL = '/api/user/'
-
-
-def test_index_returns_200(app_test):
-    request, response = app_test.test_client.get('/')
-    assert response.status == 200
+TEST_USER_DATA = {
+    "email": "test_01@email.com",
+    "password": "Password123"
+}
 
 
 def test_create_user_empty_request(app_test):
@@ -16,7 +17,11 @@ def test_create_user_empty_request(app_test):
     assert resp_data == EMPTY_ERROR
 
 
-def test_drop_all_test_db(drop_test_db):
-    print('All tables from test DB were dropped!')
-
+def test_create_user_success(app_test):
+    request, response = app_test.test_client.post(
+        USER_URL, data=json.dumps(TEST_USER_DATA))
+    resp_data = response.json
+    status_code = response.status_code.value
+    assert status_code == 201
+    assert resp_data == USER_SUCCESS_CREATION
 
