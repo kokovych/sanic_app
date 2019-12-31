@@ -4,16 +4,17 @@ from jsonschema import validate, FormatChecker
 from jsonschema.exceptions import ValidationError
 from passlib.hash import sha256_crypt
 
+from .constants import (ERR_MSG_UNIQUE_EMAIL, ERR_NONE_TYPE, ERR_REQUIRED_FIELD)
 from src.db.model import get_user_by_email, get_user_fields
 
-ERR_MSG_UNIQUE_EMAIL = "User with this email is already exist"
 
 USER_CREATION = {
     "type": "object",
     "properties": {
         "email":
             {
-                "format": "email"
+                "format": "email",
+                "type": "string"
             },
         "password":
             {
@@ -37,6 +38,8 @@ def get_validation_error_msg(err):
     err_msg = err.message
     err_type = err.path[0]
     err_msg = re.sub("'.*?'", '', err_msg, 1)
+    if ERR_NONE_TYPE in err_msg:
+        err_msg = ERR_REQUIRED_FIELD
     return {
         err_type: err_msg.strip().replace('\'', '')
     }
@@ -49,7 +52,7 @@ def clean_user_data(data):
         result[attr_name] = data.get(attr_name)
     # hash password:
     raw_password = result.get('password')
-    if raw_password:
+    if raw_password and len(raw_password) >= 8:
         result['password'] = sha256_crypt.hash(raw_password)
     return result
 
